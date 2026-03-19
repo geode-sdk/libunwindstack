@@ -117,7 +117,7 @@ bool MapInfo::InitFileMemoryFromPreviousReadOnlyMap(MemoryFileAtOffset* memory) 
   }
 
   uint64_t map_size = first_map->end() - first_map->start();
-  if (!memory->Init(name(), 0, map_size)) {
+  if (!memory->Init(name(), first_map->offset(), map_size)) {
     return false;
   }
 
@@ -126,7 +126,7 @@ bool MapInfo::InitFileMemoryFromPreviousReadOnlyMap(MemoryFileAtOffset* memory) 
     return false;
   }
 
-  if (!memory->Init(name(), 0, max_size)) {
+  if (!memory->Init(name(), first_map->offset(), max_size)) {
     return false;
   }
 
