@@ -111,8 +111,7 @@ bool MapInfo::InitFileMemoryFromPreviousReadOnlyMap(MemoryFileAtOffset* memory) 
   // same name and stretches across this map.
   auto first_map = GetFirstMap();
 
-  if (first_map == nullptr || first_map->flags() != PROT_READ ||
-      first_map->offset() > offset()) {
+  if (first_map == nullptr || first_map->offset() > offset()) {
     return false;
   }
 
