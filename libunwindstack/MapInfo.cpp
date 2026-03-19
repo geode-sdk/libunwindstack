@@ -72,17 +72,52 @@ std::shared_ptr<MapInfo> MapInfo::GetNextRealMap() {
   return nullptr;
 }
 
+std::shared_ptr<MapInfo> MapInfo::GetFirstMap() {
+  if (name().empty()) {
+    return nullptr;
+  }
+
+  std::shared_ptr<MapInfo> first_map = nullptr;
+  for (auto prev = prev_map(); prev != nullptr; prev = prev->prev_map()) {
+    if (!prev->IsBlank() && prev->name() == name()) {
+      first_map = prev;
+    }
+    else {
+      break;
+    }
+  }
+  return first_map;
+}
+
+std::shared_ptr<MapInfo> MapInfo::GetLastMap() {
+  if (name().empty()) {
+    return nullptr;
+  }
+
+  std::shared_ptr<MapInfo> last_map = nullptr;
+  for (auto next = next_map(); next != nullptr; next = next->next_map()) {
+    if (!next->IsBlank() && next->name() == name()) {
+      last_map = next;
+    }
+    else {
+      break;
+    }
+  }
+  return last_map;
+}
+
 bool MapInfo::InitFileMemoryFromPreviousReadOnlyMap(MemoryFileAtOffset* memory) {
-  // One last attempt, see if the previous map is read-only with the
+  // One last attempt, see if the first map is read-only with the
   // same name and stretches across this map.
-  auto prev_real_map = GetPrevRealMap();
-  if (prev_real_map == nullptr || prev_real_map->flags() != PROT_READ ||
-      prev_real_map->offset() >= offset()) {
+  auto first_map = GetFirstMap();
+
+  if (first_map == nullptr || first_map->flags() != PROT_READ ||
+      first_map->offset() > offset()) {
     return false;
   }
 
-  uint64_t map_size = end() - prev_real_map->end();
-  if (!memory->Init(name(), prev_real_map->offset(), map_size)) {
+  uint64_t map_size = first_map->end() - first_map->start();
+  if (!memory->Init(name(), 0, map_size)) {
     return false;
   }
 
@@ -91,12 +126,12 @@ bool MapInfo::InitFileMemoryFromPreviousReadOnlyMap(MemoryFileAtOffset* memory) 
     return false;
   }
 
-  if (!memory->Init(name(), prev_real_map->offset(), max_size)) {
+  if (!memory->Init(name(), 0, max_size)) {
     return false;
   }
 
-  set_elf_offset(offset() - prev_real_map->offset());
-  set_elf_start_offset(prev_real_map->offset());
+  set_elf_offset(offset() - first_map->offset());
+  set_elf_start_offset(first_map->offset());
   return true;
 }
 

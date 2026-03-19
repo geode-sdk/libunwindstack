@@ -124,6 +124,14 @@ class MapInfo {
   //       returns nullptr.
   std::shared_ptr<MapInfo> GetNextRealMap();
 
+  // This is the first map in the list of maps. It returns nullptr if
+  // this is the first map.
+  std::shared_ptr<MapInfo> GetFirstMap();
+
+  // This is the last map in the list of maps. It returns nullptr if
+  // this is the last map.
+  std::shared_ptr<MapInfo> GetLastMap();
+
   // This is guaranteed to give out the Elf object associated with the
   // object. The invariant is that once the Elf object is set under the
   // lock in a MapInfo object it never changes and is not freed until
