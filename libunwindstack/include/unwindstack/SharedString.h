@@ -41,7 +41,13 @@ class SharedString {
     return data_ ? *data_.get() : empty;
   }
 
-  operator std::string_view() const { return static_cast<const std::string&>(*this); }
+  operator std::string_view() const {
+    if (empty()) {
+      return "";
+    } else {
+      return std::string_view{*data_.get()};
+    }
+  }
 
  private:
   std::shared_ptr<const std::string> data_;
