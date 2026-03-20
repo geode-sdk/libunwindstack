@@ -2,5 +2,6 @@
 .vs/
 .vscode/
 
-/build/
-/cmake-*/
+build/
+cmake-*/
+.cache/

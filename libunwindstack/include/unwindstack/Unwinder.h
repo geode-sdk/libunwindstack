@@ -67,6 +67,8 @@ class Unwinder {
   virtual void Unwind(const std::vector<std::string>* initial_map_names_to_skip = nullptr,
                       const std::vector<std::string>* map_suffixes_to_ignore = nullptr);
 
+  virtual bool Step(Elf* elf, uint64_t rel_pc, Regs* regs, Memory* process_memory, bool* finished, bool* is_signal_frame);
+
   size_t NumFrames() const { return frames_.size(); }
 
   // Returns frames after unwinding.

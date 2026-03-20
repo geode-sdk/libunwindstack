@@ -232,7 +232,7 @@ void Unwinder::Unwind(const std::vector<std::string>* initial_map_names_to_skip,
           if (elf->StepIfSignalHandler(rel_pc, regs_, process_memory_.get())) {
             stepped = true;
             is_signal_frame = true;
-          } else if (elf->Step(step_pc, regs_, process_memory_.get(), &finished,
+          } else if (Step(elf, step_pc, regs_, process_memory_.get(), &finished,
                                &is_signal_frame)) {
             stepped = true;
           }
@@ -295,6 +295,10 @@ void Unwinder::Unwind(const std::vector<std::string>* initial_map_names_to_skip,
       break;
     }
   }
+}
+
+bool Unwinder::Step(Elf* elf, uint64_t rel_pc, Regs* regs, Memory* process_memory, bool* finished, bool* is_signal_frame) {
+  return elf->Step(rel_pc, regs, process_memory, finished, is_signal_frame);
 }
 
 std::string Unwinder::FormatFrame(const FrameData& frame) const {
